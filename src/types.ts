@@ -1,0 +1,1 @@
+export type RawType = { [K in string]: any };
