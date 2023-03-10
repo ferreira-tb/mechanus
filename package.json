@@ -1,0 +1,16 @@
+{
+    "name": "mechanus",
+    "version": "0.1.0",
+    "description": "A state management solution for Node",
+    "license": "MIT",
+    "main": "index.js",
+    "author": {
+        "name": "Andrew Ferreira",
+        "email": "andrew.shien2@gmail.com",
+        "url": "https://github.com/ferreira-tb"
+    },
+    "devDependencies": {
+        "@types/node": "^18.15.0",
+        "rollup": "^3.19.0"
+    }
+}
