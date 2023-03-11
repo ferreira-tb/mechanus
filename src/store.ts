@@ -1,23 +1,11 @@
-import type { RawType } from '@/types';
+import { MechanusRef, UnwrapRef } from '@/reactivity/ref';
+import { reactive } from '@/reactivity/reactive';
 
-export class MechanusStore<T extends RawType> {
-    /** The initial value of the store. */
-    readonly #initial: T;
-    /** The unproxied value of the store. */
-    #raw: T;
+export type MechanusStore<T = any> = { [K in keyof T]: UnwrapRef<T[K]> };
+export type StoreRefs<R = any> = { [K in string]: MechanusRef<R> };
+export type StoreRawValues<T extends StoreRefs> = MechanusStore<T>;
 
-    constructor(value: T) {
-        this.#initial = value;
-        this.#raw = value;
-    };
-
-    /** Returns the unproxied value of the store. */
-    public $raw(): RawType {
-        return this.#raw;
-    };
-
-    /** Resets the store to its initial value. */
-    public $reset(): void {
-        this.#raw = this.#initial;
-    };
+export function createStore<T extends StoreRefs>(refs: T): MechanusStore {
+    const store: MechanusStore = { ...refs };
+    return reactive(store);
 };

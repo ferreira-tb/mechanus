@@ -1,9 +1,11 @@
 {
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "test/**/*"],
     "compilerOptions": {
         "types": ["node"],
         "lib": ["esnext"],
         "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
         "paths": {
             "@/*": ["./src/*"]
         },

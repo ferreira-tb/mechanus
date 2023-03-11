@@ -10,6 +10,7 @@
         "url": "https://github.com/ferreira-tb"
     },
     "devDependencies": {
+        "@tb-dev/ts-guard": "^2.0.0",
         "@types/node": "^18.15.0",
         "@vitest/ui": "^0.29.2",
         "rollup": "^3.19.0",
