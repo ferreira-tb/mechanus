@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { Mechanus, ref } from '@/index';
+import { Mechanus, ref, storeToRefs } from '@/index';
 
 test('store', () => {
     const mech = new Mechanus();
@@ -75,4 +75,46 @@ test('use store', () => {
 test('use store not defined', () => {
     const mech = new Mechanus();
     expect(() => mech.use('store')).toThrow(TypeError);
+});
+
+test('store to refs', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', {
+        foo: ref('foo'),
+        bar: ref('bar')
+    });
+
+    const store = useStore();
+    const refs = storeToRefs(store);
+
+    expect(refs.foo.value).toBe('foo');
+    expect(refs.bar.value).toBe('bar');
+});
+
+test('store to refs value change', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', {
+        foo: ref('foo'),
+        bar: ref('bar')
+    });
+
+    const store = useStore();
+    const refs = storeToRefs(store);
+
+    expect(refs.foo.value).toBe('foo');
+    expect(refs.bar.value).toBe('bar');
+
+    expect(store.foo).toBe('foo');
+    expect(store.bar).toBe('bar');
+
+    refs.foo.value = 'baz';
+    refs.bar.value = 'qux';
+
+    expect(refs.foo.value).toBe('baz');
+    expect(refs.bar.value).toBe('qux');
+
+    expect(store.foo).toBe('baz');
+    expect(store.bar).toBe('qux');
 });

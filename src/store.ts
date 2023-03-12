@@ -8,7 +8,9 @@ export function createStore<T extends StoreRefs>(refs: T): MechanusStore {
     const store: MechanusStore = { ...refs };
     return new Proxy(store, {
         get(target, key) {
-            if (typeof key !== 'string') {
+            if (key === '__raw') {
+                return store;
+            } else if (typeof key !== 'string') {
                 throw new TypeError('Store keys must be strings.');
             } else if (key in target) {
                 const item = Reflect.get(target, key);
@@ -33,4 +35,8 @@ export function createStore<T extends StoreRefs>(refs: T): MechanusStore {
             throw new TypeError(`Reactive object does not have property "${String(key)}".`);
         }
     })
+};
+
+export function storeToRefs<T extends StoreRefs>(store: MechanusStore<T>): T {
+    return store.__raw as T;
 };
