@@ -1,4 +1,5 @@
 import type { MechanusRef } from '@/reactivity/ref';
+import type { MechanusComputedRef } from '@/reactivity/computed';
 
 export type ReactiveCallback<T> = (value: T, oldValue: T) => void;
 export interface EffectOptions {
@@ -33,7 +34,11 @@ export class ReactiveEffect<T = any> {
     };
 };
 
-export function watch<T>(ref: MechanusRef<T>, callback: ReactiveCallback<T>, options?: WatchOptions): () => void {
+export function watch<T>(
+    ref: MechanusRef<T> | MechanusComputedRef<T>,
+    callback: ReactiveCallback<T>,
+    options?: WatchOptions
+): () => void {
     const effect = new ReactiveEffect<T>(callback, options);
     ref.__deps.add(effect);
 
