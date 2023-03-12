@@ -1,5 +1,5 @@
 export { Mechanus } from '@/mechanus';
-export { ref, unref, isRef, isPrimitive } from '@/reactivity/ref';
+export { ref, unref, isRef } from '@/reactivity/ref';
 export { computed } from '@/reactivity/computed';
 export { watch } from '@/reactivity/effect';
 export { storeToRefs } from '@/store';

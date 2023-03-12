@@ -1,6 +1,6 @@
 {
     "name": "mechanus",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Simple state management solution for Node.js",
     "license": "MIT",
     "main": "dist/index.js",
