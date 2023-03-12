@@ -67,7 +67,7 @@ function triggerRefDeps<T>(mechRef: MechanusRef<T>, value: T, oldValue: T) {
     mechRef.__deps.forEach((effect) => effect.run(value, oldValue));
 };
 
-function isPrimitive(value: unknown): boolean {
+export function isPrimitive(value: unknown): boolean {
     return value === null || (
         typeof value !== 'object' &&
         typeof value !== 'function' &&
