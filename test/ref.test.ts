@@ -43,7 +43,7 @@ test('ref validator with custom error', () => {
         errorClass: ReferenceError
     });
 
-    expect((foo as any)._errorClass).toBe(ReferenceError);
+    expect((foo as any).__errorClass).toBe(ReferenceError);
     expect(() => (foo.value = (123 as unknown) as string)).toThrowError(ReferenceError);
 });
 

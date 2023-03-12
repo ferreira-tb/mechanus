@@ -16,6 +16,7 @@
         "noImplicitThis": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
+        "strictFunctionTypes": true,
         "strictPropertyInitialization": true,
         "useUnknownInCatchVariables": true,
         
@@ -33,6 +34,7 @@
         "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "forceConsistentCasingInFileNames": true,
+        "noUncheckedIndexedAccess": true,
         "removeComments": true
     }
 }

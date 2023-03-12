@@ -1,6 +1,6 @@
 import { ReactiveEffect } from '@/reactivity/effect';
 
-export interface MechanusRefOptions<T = any> {
+export interface MechanusRefOptions<T> {
     readonly validator?: ((value: unknown) => value is T) | null;
     readonly throwOnInvalid?: boolean;
     readonly errorClass?: new (message: string) => Error;
@@ -8,52 +8,69 @@ export interface MechanusRefOptions<T = any> {
 
 export type UnwrapRef<T> = T extends MechanusRef<infer R> ? R : T;
 
-class MechanusRef<T = any> {
-    readonly _isRef = true;
-    readonly _deps = new Set<ReactiveEffect>();
+export class MechanusRef<T = any> {
+    readonly __isRef = true;
+    readonly __deps = new Set<ReactiveEffect<T>>();
 
-    private _value: T;
+    private __value: T;
 
-    private readonly _validator: Required<MechanusRefOptions<T>>['validator'];
-    private readonly _throwOnInvalid: Required<MechanusRefOptions<T>>['throwOnInvalid'];
-    private readonly _errorClass: Required<MechanusRefOptions<T>>['errorClass'];
+    private readonly __validator: Required<MechanusRefOptions<T>>['validator'];
+    private readonly __throwOnInvalid: Required<MechanusRefOptions<T>>['throwOnInvalid'];
+    private readonly __errorClass: Required<MechanusRefOptions<T>>['errorClass'];
 
     constructor(value: T, options?: MechanusRefOptions<T>) {
-        this._value = value;
+        this.__value = value;
 
         // Options.
-        this._validator = typeof options?.validator === 'function' ? options.validator : null;
-        this._throwOnInvalid = options?.throwOnInvalid === true;
-        this._errorClass = typeof options?.errorClass === 'function' ? options.errorClass : TypeError;
+        this.__validator = typeof options?.validator === 'function' ? options.validator : null;
+        this.__throwOnInvalid = options?.throwOnInvalid === true;
+        this.__errorClass = typeof options?.errorClass === 'function' ? options.errorClass : TypeError;
     };
 
     get value(): T {
-        return this._value;
+        return this.__value;
     };
 
     set value(newValue: T) {
-        if (this._value === newValue) return;
-        if (this._validator && this._validator(newValue) !== true) {
-            if (!this._throwOnInvalid) return;
-            throw new this._errorClass(`Invalid value for ref: ${newValue}`);
+        if (this.__value === newValue) return;
+        if (this.__validator && this.__validator(newValue) !== true) {
+            if (!this.__throwOnInvalid) return;
+            throw new this.__errorClass(`Invalid value for ref: ${newValue}`);
         };
 
-        this._value = newValue;
+        if (!isPrimitive(newValue)) {
+            throw new TypeError('Ref value must be a primitive.');
+        } else {
+            const oldValue = this.__value;
+            this.__value = newValue;
+            triggerRefDeps<T>(this, newValue, oldValue);
+        };
     };
 };
 
-export type { MechanusRef };
-
 export function ref<T>(value: T, options?: MechanusRefOptions<T>): MechanusRef<T> {
     if (isRef<T>(value)) return value;
-    return new MechanusRef(value, options);
+    if (!isPrimitive(value)) throw new TypeError('Ref value must be a primitive.');
+    return new MechanusRef(value, options) as MechanusRef<T>;
 };
 
-export function isRef<T>(value: MechanusRef<T> | unknown): value is MechanusRef<T>;
+export function isRef<T>(value: MechanusRef<T> | T): value is MechanusRef<T>;
 export function isRef(value: any): value is MechanusRef {
-    return !!(value && value._isRef === true);
+    return !!(value && value.__isRef === true);
 };
 
 export function unref<T>(item: MechanusRef<T> | T): T {
     return isRef(item) ? item.value : item;
+};
+
+function triggerRefDeps<T>(mechRef: MechanusRef<T>, value: T, oldValue: T) {
+    mechRef.__deps.forEach((effect) => effect.run(value, oldValue));
+};
+
+function isPrimitive(value: unknown): boolean {
+    return value === null || (
+        typeof value !== 'object' &&
+        typeof value !== 'function' &&
+        typeof value !== 'symbol'
+    );
 };
