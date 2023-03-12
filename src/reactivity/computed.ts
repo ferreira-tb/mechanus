@@ -30,21 +30,27 @@ export class MechanusComputedRef<T = any> {
             throw new TypeError('Computed ref symbol key does not match.');
         };
 
+        const oldValue = this.value;
         this.value = newValue;
+        triggerComputedRefDeps<T>(this, newValue, oldValue);
     };
 };
 
-export function computed<T>(refs: MechanusRef[], callback: () => T): MechanusComputedRef<T> {
+export function computed<T>(refs: (MechanusRef | MechanusComputedRef)[], computedValue: () => T): MechanusComputedRef<T> {
     const symbol = Symbol();
     const effect = new ReactiveEffect<T>(update);
     const computedRef = new MechanusComputedRef<T>(symbol, effect);
     update();
 
     function update() {
-        const newValue = callback();
+        const newValue = computedValue();
         computedRef.__update(symbol, newValue);
     };
 
     refs.forEach((ref) => ref.__deps.add(effect));
     return computedRef;
+};
+
+function triggerComputedRefDeps<T>(computedRef: MechanusComputedRef<T>, value: T, oldValue: T) {
+    computedRef.__deps.forEach((effect) => effect.run(value, oldValue));
 };
