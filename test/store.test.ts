@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { Mechanus, ref, storeToRefs } from '@/index';
+import { Mechanus, ref, storeToRefs, computed } from '@/index';
 
 test('store', () => {
     const mech = new Mechanus();
@@ -117,4 +117,76 @@ test('store to refs value change', () => {
 
     expect(store.foo).toBe('baz');
     expect(store.bar).toBe('qux');
+});
+
+test('computed from store', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', {
+        foo: ref('foo'),
+        bar: ref('bar')
+    });
+
+    const store = useStore();
+    const { foo, bar } = storeToRefs(store);
+
+    const baz = computed([foo, bar], () => foo.value + bar.value);
+    expect(baz.value).toBe('foobar');
+});
+
+test('computed from store value change', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', {
+        foo: ref('foo'),
+        bar: ref('bar')
+    });
+
+    const store = useStore();
+    const { foo, bar } = storeToRefs(store);
+
+    const baz = computed([foo, bar], () => foo.value + bar.value);
+    expect(baz.value).toBe('foobar');
+
+    foo.value = 'baz';
+    bar.value = 'qux';
+    expect(baz.value).toBe('bazqux');
+});
+
+test('store computed', () => {
+    const mech = new Mechanus();
+
+    const foo = ref('foo');
+    const bar = ref('bar');
+
+    const useStore = mech.define('store', {
+        qux: computed([foo, bar], () => foo.value + bar.value)
+    });
+
+    const store = useStore();
+    expect(store.qux).toBe('foobar');
+
+    foo.value = 'baz';
+    bar.value = 'qux';
+    expect(store.qux).toBe('bazqux');
+});
+
+test('store computed to refs', () => {
+    const mech = new Mechanus();
+
+    const foo = ref('foo');
+    const bar = ref('bar');
+
+    const useStore = mech.define('store', {
+        qux: computed([foo, bar], () => foo.value + bar.value)
+    });
+
+    const store = useStore();
+    const refs = storeToRefs(store);
+
+    expect(refs.qux.value).toBe('foobar');
+
+    foo.value = 'baz';
+    bar.value = 'qux';
+    expect(refs.qux.value).toBe('bazqux');
 });

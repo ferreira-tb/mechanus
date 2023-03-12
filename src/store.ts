@@ -1,7 +1,14 @@
 import { MechanusRef, UnwrapRef, unref, isRef } from '@/reactivity/ref';
+import type { UnwrapComputed, MechanusComputedRef } from '@/reactivity/computed';
 
-export type MechanusStore<T = any> = { [K in keyof T]: UnwrapRef<T[K]> };
-export type StoreRefs<R = any> = { [K in string]: MechanusRef<R> };
+export type MechanusStore<T = any> = {
+    [K in keyof T]: 
+        T[K] extends MechanusRef ? UnwrapRef<T[K]> :
+        T[K] extends MechanusComputedRef ? UnwrapComputed<T[K]> :
+        T[K];
+};
+
+export type StoreRefs<R = any> = { [K in string]: MechanusRef<R> | MechanusComputedRef<R> };
 export type StoreRawValues<T extends StoreRefs> = MechanusStore<T>;
 
 export function createStore<T extends StoreRefs>(refs: T): MechanusStore {

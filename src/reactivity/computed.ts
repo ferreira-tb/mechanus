@@ -1,7 +1,10 @@
 import { ReactiveEffect } from '@/reactivity/effect';
 import type { MechanusRef } from '@/reactivity/ref';
 
+export type UnwrapComputed<T> = T extends MechanusComputedRef<infer U> ? U : T;
+
 export class MechanusComputedRef<T = any> {
+    readonly __isRef = true;
     readonly __isComputedRef = true;
     readonly __deps = new Set<ReactiveEffect<T>>();
     readonly __symbol: symbol;
