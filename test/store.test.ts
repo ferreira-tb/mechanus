@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { Mechanus, ref, storeToRefs, computed } from '@/index';
+import { Mechanus, ref, storeToRefs, computed } from '../src/index';
 
 test('store', () => {
     const mech = new Mechanus();

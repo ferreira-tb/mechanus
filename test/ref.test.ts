@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { isString } from '@tb-dev/ts-guard';
-import { ref, isRef, unref } from '@/index';
+import { ref, isRef, unref } from '../src/index';
 
 test('ref', () => {
     const foo = ref('bar');

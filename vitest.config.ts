@@ -8,6 +8,9 @@ export default defineConfig({
         watch: true,
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
+        },
+        typecheck: {
+            tsconfig: './tsconfig.json'
         }
     }
 });

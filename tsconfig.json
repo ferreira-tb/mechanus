@@ -1,16 +1,20 @@
 {
-    "include": ["src/**/*", "test/**/*"],
+    "include": ["src/**/*.ts"],
     "compilerOptions": {
         "types": ["node"],
         "lib": ["esnext"],
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "node",
+        "outDir": "dist",
+        "declaration": false,
+        "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         },
 
         // Modo estrito
+        "noEmitOnError": true,
         "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -35,6 +39,6 @@
         "noFallthroughCasesInSwitch": true,
         "forceConsistentCasingInFileNames": true,
         "noUncheckedIndexedAccess": true,
-        "removeComments": true
+        "removeComments": false
     }
 }

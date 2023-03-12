@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { computed, ref } from '@/index';
+import { computed, ref } from '../src/index';
 
 test('computed', () => {
     const foo = ref('bar');

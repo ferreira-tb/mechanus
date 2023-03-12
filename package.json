@@ -1,24 +1,40 @@
 {
     "name": "mechanus",
-    "version": "0.1.0",
+    "version": "1.0.1",
     "description": "Simple state management solution for Node.js",
     "license": "MIT",
     "main": "dist/index.js",
+    "type": "module",
+    "homepage": "https://github.com/ferreira-tb/mechanus",
     "author": {
         "name": "Andrew Ferreira",
         "email": "andrew.shien2@gmail.com",
         "url": "https://github.com/ferreira-tb"
     },
+    "keywords": [
+        "state management",
+        "node",
+        "reactive"
+    ],
     "devDependencies": {
+        "@rollup/plugin-alias": "^4.0.3",
+        "@rollup/plugin-node-resolve": "^15.0.1",
+        "@rollup/plugin-typescript": "^11.0.0",
         "@tb-dev/ts-guard": "^2.0.0",
         "@types/node": "^18.15.0",
         "@vitest/ui": "^0.29.2",
         "rollup": "^3.19.0",
+        "rollup-plugin-dts": "^5.2.0",
+        "tslib": "^2.5.0",
         "vitest": "^0.29.2"
     },
     "scripts": {
         "build": "rollup -c",
         "test": "vitest",
         "test:ui": "vitest --ui"
-    }
+    },
+    "files": [
+        "dist/**/*"
+    ],
+    "types": "dist/index.d.ts"
 }

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ref, watch } from '@/index';
+import { ref, watch } from '../src/index';
 
 test('watch', () => {
     const foo = ref('bar');
