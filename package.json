@@ -17,7 +17,7 @@
         "reactive"
     ],
     "devDependencies": {
-        "@rollup/plugin-alias": "^4.0.3",
+        "@rollup/plugin-alias": "^5.0.0",
         "@rollup/plugin-node-resolve": "^15.0.1",
         "@rollup/plugin-typescript": "^11.0.0",
         "@tb-dev/ts-guard": "^2.0.0",
