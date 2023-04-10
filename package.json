@@ -22,7 +22,7 @@
         "@rollup/plugin-typescript": "^11.0.0",
         "@tb-dev/ts-guard": "^2.0.0",
         "@types/node": "^18.15.0",
-        "@vitest/ui": "^0.29.2",
+        "@vitest/ui": "^0.30.0",
         "rollup": "^3.19.0",
         "rollup-plugin-dts": "^5.2.0",
         "tslib": "^2.5.0",
