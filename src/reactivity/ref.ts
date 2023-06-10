@@ -1,30 +1,15 @@
 import { ReactiveEffect } from '@/reactivity/effect';
-
-export interface MechanusRefOptions<T> {
-    readonly validator?: ((value: unknown) => value is T) | null;
-    readonly throwOnInvalid?: boolean;
-    readonly errorClass?: new (message: string) => Error;
-};
+import { MechanusComputedRef } from '@/reactivity/computed';
 
 export type UnwrapRef<T> = T extends MechanusRef<infer R> ? R : T;
+export type MechanusRefOrComputedRef<T = any> = MechanusRef<T> | MechanusComputedRef<T>;
 
 export class MechanusRef<T = any> {
-    readonly __isRef = true;
     readonly __deps = new Set<ReactiveEffect<T>>();
-
     private __value: T;
 
-    private readonly __validator: Required<MechanusRefOptions<T>>['validator'];
-    private readonly __throwOnInvalid: Required<MechanusRefOptions<T>>['throwOnInvalid'];
-    private readonly __errorClass: Required<MechanusRefOptions<T>>['errorClass'];
-
-    constructor(value: T, options?: MechanusRefOptions<T>) {
+    constructor(value: T) {
         this.__value = value;
-
-        // Options.
-        this.__validator = typeof options?.validator === 'function' ? options.validator : null;
-        this.__throwOnInvalid = options?.throwOnInvalid === true;
-        this.__errorClass = typeof options?.errorClass === 'function' ? options.errorClass : TypeError;
     };
 
     get value(): T {
@@ -33,10 +18,6 @@ export class MechanusRef<T = any> {
 
     set value(newValue: T) {
         if (this.__value === newValue) return;
-        if (this.__validator && this.__validator(newValue) !== true) {
-            if (!this.__throwOnInvalid) return;
-            throw new this.__errorClass(`Invalid value for ref: ${String(newValue)}`);
-        };
 
         const oldValue = this.__value;
         this.__value = newValue;
@@ -44,14 +25,14 @@ export class MechanusRef<T = any> {
     };
 };
 
-export function ref<T>(value: T, options?: MechanusRefOptions<T>): MechanusRef<T> {
-    if (isRef<T>(value)) return value;
-    return new MechanusRef(value, options) as MechanusRef<T>;
+export function ref<T>(value: T): MechanusRef<T> {
+    if (isRef(value)) return value;
+    return new MechanusRef(value);
 };
 
 export function isRef<T>(value: MechanusRef<T> | T): value is MechanusRef<T>;
-export function isRef(value: any): value is MechanusRef {
-    return !!(value && value.__isRef === true);
+export function isRef(value: unknown): value is MechanusRef {
+    return Boolean(value && (value instanceof MechanusRef || value instanceof MechanusComputedRef));
 };
 
 export function unref<T>(item: MechanusRef<T> | T): T {

@@ -5,7 +5,7 @@ export default defineConfig({
     test: {
         globals: false,
         environment: 'node',
-        watch: true,
+        watch: false,
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
         },

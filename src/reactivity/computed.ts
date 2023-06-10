@@ -1,11 +1,10 @@
 import { ReactiveEffect } from '@/reactivity/effect';
-import type { MechanusRef } from '@/reactivity/ref';
+import { MechanusComputedRefError } from '@/errors';
+import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
 
 export type UnwrapComputed<T> = T extends MechanusComputedRef<infer U> ? U : T;
 
 export class MechanusComputedRef<T = any> {
-    readonly __isRef = true;
-    readonly __isComputedRef = true;
     readonly __deps = new Set<ReactiveEffect<T>>();
     readonly __symbol: symbol;
     readonly __effect: ReactiveEffect<T>;
@@ -21,22 +20,18 @@ export class MechanusComputedRef<T = any> {
         return this.__value;
     };
 
-    set value(newValue: T) {
-        this.__value = newValue;
-    };
-
     public __update(symbolKey: symbol, newValue: T) {
         if (symbolKey !== this.__symbol) {
-            throw new TypeError('Computed ref symbol key does not match.');
+            throw new MechanusComputedRefError('Computed ref symbol key does not match.');
         };
 
         const oldValue = this.value;
-        this.value = newValue;
+        this.__value = newValue;
         triggerComputedRefDeps<T>(this, newValue, oldValue);
     };
 };
 
-export function computed<T>(refs: (MechanusRef | MechanusComputedRef)[], computedValue: () => T): MechanusComputedRef<T> {
+export function computed<T>(refs: MechanusRefOrComputedRef[], computedValue: () => T): MechanusComputedRef<T> {
     const symbol = Symbol();
     const effect = new ReactiveEffect<T>(update);
     const computedRef = new MechanusComputedRef<T>(symbol, effect);

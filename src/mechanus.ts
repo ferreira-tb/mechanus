@@ -1,5 +1,6 @@
 import { createStore } from '@/store';
 import { unref } from '@/reactivity/ref';
+import { MechanusStoreError } from '@/errors';
 import type { MechanusStore, StoreRefs, StoreRawValues } from '@/store';
 
 export class Mechanus {
@@ -7,7 +8,7 @@ export class Mechanus {
 
     public define<T extends StoreRefs>(name: string, refs: T): () => MechanusStore<T> {
         if (this.#stores.has(name)) {
-            throw new TypeError(`Store "${name}" is already defined.`);
+            throw new MechanusStoreError(`Store "${name}" is already defined.`);
         };
 
         const store = createStore<T>(refs);
@@ -18,7 +19,7 @@ export class Mechanus {
 
     public use<T extends StoreRefs>(name: string): MechanusStore {
         const store = this.#stores.get(name);
-        if (!store) throw new TypeError(`Store "${name}" is not defined.`);
+        if (!store) throw new MechanusStoreError(`Store "${name}" is not defined.`);
         return store as MechanusStore<T>;
     };
 
