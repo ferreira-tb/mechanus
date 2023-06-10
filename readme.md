@@ -42,7 +42,6 @@ const mechanus = new Mechanus();
 
 const useStore = mechanus.define('my-store', {
     counter: ref(0),
-    double: computed(['counter'], () => counter.value * 2),
     players: ref(['John', 'Mary', 'Peter'])
 });
 
