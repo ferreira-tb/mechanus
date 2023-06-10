@@ -32,7 +32,7 @@ export function until<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
 };
 
 function toMatch<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
-    return function(condition: (value: T) => boolean, options: UntilOptions = {}) {
+    return function(condition: (value: T) => boolean, options: UntilOptions = {}): Promise<void> {
         let stopWatcher: (() => void) | null = null;
         const watcher = new Promise<void>((resolve) => {
             stopWatcher = watchImmediate(mechanusRef, (newValue) => {
