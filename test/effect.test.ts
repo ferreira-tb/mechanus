@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
-import { ref, watch } from '../src/index';
+import { ref } from '@/reactivity/ref';
+import { watch, watchImmediate, watchOnce } from '@/reactivity/effect';
 
 test('watch', () => {
     const foo = ref('bar');
@@ -15,11 +16,11 @@ test('watch', () => {
     expect(count).toBe(2);
 });
 
-test('unwatch', () => {
+test('stop watch', () => {
     const foo = ref('bar');
     let count = 0;
 
-    const unwatch = watch(foo, () => count++);
+    const stop = watch(foo, () => count++);
     expect(count).toBe(0);
 
     foo.value = 'baz';
@@ -28,7 +29,7 @@ test('unwatch', () => {
     foo.value = 'qux';
     expect(count).toBe(2);
 
-    unwatch();
+    stop();
     foo.value = 'quux';
     expect(count).toBe(2);
 });
@@ -45,4 +46,32 @@ test('watch old value', () => {
 
     foo.value = 'qux';
     expect(oldValue).toBe('baz');
+});
+
+test('watch immediate', () => {
+    const foo = ref('bar');
+    let count = 0;
+
+    watchImmediate(foo, () => count++);
+    expect(count).toBe(1);
+
+    foo.value = 'baz';
+    expect(count).toBe(2);
+
+    foo.value = 'qux';
+    expect(count).toBe(3);
+});
+
+test('watch once', () => {
+    const foo = ref('bar');
+    let count = 0;
+
+    watchOnce(foo, () => count++);
+    expect(count).toBe(0);
+
+    foo.value = 'baz';
+    expect(count).toBe(1);
+
+    foo.value = 'qux';
+    expect(count).toBe(1);
 });

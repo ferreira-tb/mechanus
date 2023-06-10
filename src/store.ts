@@ -1,4 +1,6 @@
 import { MechanusRef, UnwrapRef, unref, isRef } from '@/reactivity/ref';
+import { MechanusStoreError } from '@/errors';
+import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
 import type { UnwrapComputed, MechanusComputedRef } from '@/reactivity/computed';
 
 export type MechanusStore<T = any> = {
@@ -8,7 +10,7 @@ export type MechanusStore<T = any> = {
         T[K];
 };
 
-export type StoreRefs<R = any> = { [K in string]: MechanusRef<R> | MechanusComputedRef<R> };
+export type StoreRefs<R = any> = { [K in string]: MechanusRefOrComputedRef<R> };
 export type StoreRawValues<T extends StoreRefs> = MechanusStore<T>;
 
 export function createStore<T extends StoreRefs>(refs: T): MechanusStore {
@@ -18,28 +20,28 @@ export function createStore<T extends StoreRefs>(refs: T): MechanusStore {
             if (key === '__raw') {
                 return store;
             } else if (typeof key !== 'string') {
-                throw new TypeError('Store keys must be strings.');
+                throw new MechanusStoreError('Store keys must be strings.');
             } else if (key in target) {
                 const item = Reflect.get(target, key);
                 return unref(item);
             };
 
-            throw new TypeError(`Reactive object does not have property "${String(key)}".`);
+            throw new MechanusStoreError(`Reactive object does not have property "${String(key)}".`);
         },
         set(target, key, value) {
             if (typeof key !== 'string') {
-                throw new TypeError('Store keys must be strings.');
+                throw new MechanusStoreError('Store keys must be strings.');
             } else if (key in target) {
                 const item = Reflect.get(target, key);
                 if (isRef(item)) {
                     item.value = value;
                     return true;
                 } else {
-                    throw new TypeError(`Cannot set value of non-ref property "${key}".`);
+                    throw new MechanusStoreError(`Cannot set value of non-ref property "${key}".`);
                 };       
             };
 
-            throw new TypeError(`Reactive object does not have property "${String(key)}".`);
+            throw new MechanusStoreError(`Reactive object does not have property "${String(key)}".`);
         }
     })
 };

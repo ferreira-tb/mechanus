@@ -1,5 +1,9 @@
 import { expect, test } from 'vitest';
-import { Mechanus, ref, storeToRefs, computed } from '../src/index';
+import { Mechanus } from '@/mechanus';
+import { storeToRefs } from '@/store';
+import { ref } from '@/reactivity/ref';
+import { computed } from '@/reactivity/computed';
+import { MechanusStoreError } from '@/errors';
 
 test('store', () => {
     const mech = new Mechanus();
@@ -74,7 +78,7 @@ test('use store', () => {
 
 test('use store not defined', () => {
     const mech = new Mechanus();
-    expect(() => mech.use('store')).toThrow(TypeError);
+    expect(() => mech.use('store')).toThrow(MechanusStoreError);
 });
 
 test('store to refs', () => {

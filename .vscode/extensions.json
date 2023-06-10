@@ -1,5 +1,8 @@
 {
     "recommendations": [
-        "zixuanchen.vitest-explorer"
+        "zixuanchen.vitest-explorer",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "vivaxy.vscode-conventional-commits"
     ]
 }
