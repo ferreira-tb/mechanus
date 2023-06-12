@@ -36,18 +36,21 @@ counter.value = 3;
 Stores are objects that contain reactive properties.
 
 ```typescript
-import { Mechanus, storeToRefs } from 'mechanus';
+import { Mechanus, computed, ref, storeToRefs } from 'mechanus';
 
 const mechanus = new Mechanus();
 
-const useStore = mechanus.define('my-store', {
-    counter: ref(0),
-    players: ref(['John', 'Mary', 'Peter'])
+const usePlayerStore = mechanus.define('player-store', () => {
+    const players = ref(['John', 'Mary', 'Peter']);
+    const amount = computed([players], () => players.value.length);
+
+    return { players, amount };
 });
 
 // We can get the reactive objects from the store with `storeToRefs`.
-const { counter, double, players } = storeToRefs(useStore);
-console.log(counter.value); // 0
+const playerStore = usePlayerStore();
+const { amount } = storeToRefs(playerStore);
+console.log(amount.value); // 3
 ```
 
 ## Watchers

@@ -21,13 +21,16 @@ export type UntilOptions = {
     timeoutReason?: string
 };
 
+export type TypeOfValues = 'bigint' | 'boolean' | 'function' | 'number' | 'object' | 'string' | 'symbol' | 'undefined';
+
 export function until<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
     return {
         toBe: toBe(mechanusRef),
         toBeFalsy: toBeFalsy(mechanusRef),
         toBeInstanceOf: toBeInstanceOf(mechanusRef),
         toBeNull: toBeNull(mechanusRef),
-        toBeTruthy: toBeTruthy(mechanusRef)
+        toBeTruthy: toBeTruthy(mechanusRef),
+        toBeTypeOf: toBeTypeOf(mechanusRef)
     } as const;
 };
 
@@ -85,5 +88,11 @@ function toBeNull<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
 function toBeTruthy<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
     return function(options: UntilOptions = {}) {
         return toMatch(mechanusRef)((value) => Boolean(value), options);
+    };
+};
+
+function toBeTypeOf<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
+    return function(expectedType: TypeOfValues, options: UntilOptions = {}) {
+        return toMatch(mechanusRef)((value) => typeof value === expectedType, options);
     };
 };

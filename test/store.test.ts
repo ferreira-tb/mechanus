@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
-import { Mechanus } from '@/mechanus';
-import { storeToRefs } from '@/store';
+import { Mechanus, storeToRefs } from '@/mechanus';
 import { ref } from '@/reactivity/ref';
 import { computed } from '@/reactivity/computed';
 import { MechanusStoreError } from '@/errors';
@@ -8,9 +7,11 @@ import { MechanusStoreError } from '@/errors';
 test('store', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -22,16 +23,24 @@ test('store', () => {
 test('store already defined', () => {
     const mech = new Mechanus();
 
-    mech.define('store', { foo: ref('foo') });
-    expect(() => mech.define('store', { foo: ref('foo') })).toThrowError();
+    mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    expect(() => mech.define('store', () => ({ foo: ref('foo') }))).toThrow(MechanusStoreError);
 });
 
 test('store value change', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -49,31 +58,54 @@ test('store value change', () => {
 test('store to raw', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar'),
-        qux: ref(2)
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+        const qux = ref(2);
+
+        return { foo, bar, qux };
     });
 
     const store = useStore();
+    const raw = store.$raw();
 
-    expect(mech.toRaw(store)).toEqual({
+    expect(raw).toEqual({
         foo: 'foo',
         bar: 'bar',
         qux: 2
     });
 });
 
+test('store raw is clonable', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+    const raw = store.$raw();
+
+    expect(() => structuredClone(store)).toThrow();
+    expect(() => structuredClone(raw)).not.toThrow();
+});
+
 test('use store', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
-    const store = useStore();  
-    expect(mech.use('store')).toBe(store);
+    const store = useStore();
+    const usedStore = mech.use('store');
+    expect(usedStore).toBe(store);
 });
 
 test('use store not defined', () => {
@@ -84,9 +116,11 @@ test('use store not defined', () => {
 test('store to refs', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -99,9 +133,11 @@ test('store to refs', () => {
 test('store to refs value change', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -123,12 +159,44 @@ test('store to refs value change', () => {
     expect(store.bar).toBe('qux');
 });
 
+test('refs from the store are the same', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+    const { foo, bar } = storeToRefs(store);
+    const { foo: foo2, bar: bar2 } = storeToRefs(store);
+
+    expect(foo).toBe(foo2);
+    expect(bar).toBe(bar2);
+
+    expect(foo.value).toBe('foo');
+    expect(foo2.value).toBe('foo');
+    foo.value = 'baz';
+    expect(foo.value).toBe('baz');
+    expect(foo2.value).toBe('baz');
+
+    expect(bar.value).toBe('bar');
+    expect(bar2.value).toBe('bar');
+    bar.value = 'qux';
+    expect(bar.value).toBe('qux');
+    expect(bar2.value).toBe('qux');
+});
+
 test('computed from store', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -141,9 +209,11 @@ test('computed from store', () => {
 test('computed from store value change', () => {
     const mech = new Mechanus();
 
-    const useStore = mech.define('store', {
-        foo: ref('foo'),
-        bar: ref('bar')
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
     });
 
     const store = useStore();
@@ -163,8 +233,10 @@ test('store computed', () => {
     const foo = ref('foo');
     const bar = ref('bar');
 
-    const useStore = mech.define('store', {
-        qux: computed([foo, bar], () => foo.value + bar.value)
+    const useStore = mech.define('store', () => {
+        const qux = computed([foo, bar], () => foo.value + bar.value);
+
+        return { qux };
     });
 
     const store = useStore();
@@ -181,16 +253,58 @@ test('store computed to refs', () => {
     const foo = ref('foo');
     const bar = ref('bar');
 
-    const useStore = mech.define('store', {
-        qux: computed([foo, bar], () => foo.value + bar.value)
+    const useStore = mech.define('store', () => {
+        const qux = computed([foo, bar], () => foo.value + bar.value);
+
+        return { qux };
     });
 
     const store = useStore();
-    const refs = storeToRefs(store);
+    const { qux } = storeToRefs(store);
 
-    expect(refs.qux.value).toBe('foobar');
+    expect(qux.value).toBe('foobar');
 
     foo.value = 'baz';
     bar.value = 'qux';
-    expect(refs.qux.value).toBe('bazqux');
+    expect(qux.value).toBe('bazqux');
+});
+
+test('patch store values', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+
+    expect(store.foo).toBe('foo');
+    expect(store.bar).toBe('bar');
+
+    store.$patch({ foo: 'baz', bar: 'qux' });
+    expect(store.foo).toBe('baz');
+    expect(store.bar).toBe('qux');
+
+    store.$patch({ foo: 'foo' });
+    expect(store.foo).toBe('foo');
+    expect(store.bar).toBe('qux');
+});
+
+test('cannot set non-ref properties', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        return { foo };
+    });
+
+    const store = useStore();
+
+    expect(() => ((store as any).bar = 'bar')).toThrow();
+    expect(() => ((store as any).__mech__raw = 'hi')).toThrow();
+    expect(() => (store.$patch = () => void 0)).toThrow();
+    expect(() => (store.$raw = () => void 0 as any)).toThrow();
 });

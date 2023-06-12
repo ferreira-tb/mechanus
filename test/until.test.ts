@@ -121,3 +121,29 @@ test('until to be null (throw on timeout)', async () => {
     expect(foo.value).not.toBeNull();
     clearTimeout(timeout);
 });
+
+test('until to be typeof', async () => {
+    const foo = ref<any>('bar');
+    queueMicrotask(() => (foo.value = 123));
+
+    await until(foo).toBeTypeOf('number');
+    expect(foo.value).toBeTypeOf('number');
+});
+
+test('until to be typeof (timeout)', async () => {
+    const foo = ref<any>('bar');
+    const timeout = setTimeout(() => (foo.value = 123), 1000);
+
+    const options = { timeout: 50, throwOnTimeout: false };
+    await expect(until(foo).toBeTypeOf('number', options)).resolves.not.toThrowError();
+    clearTimeout(timeout);
+});
+
+test('until to be typeof (throw on timeout)', async () => {
+    const foo = ref<any>('bar');
+    const timeout = setTimeout(() => (foo.value = 123), 1000);
+
+    await expect(until(foo).toBeTypeOf('number', { timeout: 50 })).rejects.toThrowError();
+    expect(foo.value).toBeTypeOf('string');
+    clearTimeout(timeout);
+});

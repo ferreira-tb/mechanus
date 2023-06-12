@@ -6,22 +6,27 @@ export type MechanusRefOrComputedRef<T = any> = MechanusRef<T> | MechanusCompute
 
 export class MechanusRef<T = any> {
     readonly __deps = new Set<ReactiveEffect<T>>();
-    private __value: T;
+    
+    #value: T;
 
     constructor(value: T) {
-        this.__value = value;
+        this.#value = value;
     };
 
     get value(): T {
-        return this.__value;
+        return this.#value;
     };
 
     set value(newValue: T) {
-        if (this.__value === newValue) return;
+        if (this.#value === newValue) return;
 
-        const oldValue = this.__value;
-        this.__value = newValue;
-        triggerRefDeps<T>(this, newValue, oldValue);
+        const oldValue = this.#value;
+        this.#value = newValue;
+        this.#triggerRefDeps<T>(this, newValue, oldValue);
+    };
+
+    #triggerRefDeps<T>(mechRef: MechanusRef<T>, value: T, oldValue: T) {
+        mechRef.__deps.forEach((effect) => effect.run(value, oldValue));
     };
 };
 
@@ -37,8 +42,4 @@ export function isRef(value: unknown): value is MechanusRef {
 
 export function unref<T>(item: MechanusRef<T> | T): T {
     return isRef(item) ? item.value : item;
-};
-
-function triggerRefDeps<T>(mechRef: MechanusRef<T>, value: T, oldValue: T) {
-    mechRef.__deps.forEach((effect) => effect.run(value, oldValue));
 };

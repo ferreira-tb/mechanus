@@ -9,7 +9,7 @@ export class MechanusComputedRef<T = any> {
     readonly __symbol: symbol;
     readonly __effect: ReactiveEffect<T>;
 
-    private __value!: T;
+    #value!: T;
 
     constructor(symbol: symbol, effect: ReactiveEffect<T>) {
         this.__symbol = symbol;
@@ -17,7 +17,11 @@ export class MechanusComputedRef<T = any> {
     };
 
     get value(): T {
-        return this.__value;
+        return this.#value;
+    };
+
+    #triggerComputedRefDeps<T>(computedRef: MechanusComputedRef<T>, value: T, oldValue: T) {
+        computedRef.__deps.forEach((effect) => effect.run(value, oldValue));
     };
 
     public __update(symbolKey: symbol, newValue: T) {
@@ -26,8 +30,8 @@ export class MechanusComputedRef<T = any> {
         };
 
         const oldValue = this.value;
-        this.__value = newValue;
-        triggerComputedRefDeps<T>(this, newValue, oldValue);
+        this.#value = newValue;
+        this.#triggerComputedRefDeps<T>(this, newValue, oldValue);
     };
 };
 
@@ -44,8 +48,4 @@ export function computed<T>(refs: MechanusRefOrComputedRef[], computedValue: () 
 
     refs.forEach((ref) => ref.__deps.add(effect));
     return computedRef;
-};
-
-function triggerComputedRefDeps<T>(computedRef: MechanusComputedRef<T>, value: T, oldValue: T) {
-    computedRef.__deps.forEach((effect) => effect.run(value, oldValue));
 };
