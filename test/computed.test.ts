@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ref } from '@/reactivity/ref';
+import { isRef, ref, unref } from '@/reactivity/ref';
 import { computed } from '@/reactivity/computed';
 
 test('computed', () => {
@@ -46,4 +46,16 @@ test('computed many deps', () => {
 
     foo.value = 'qux';
     expect(quux.value).toBe('quxbazquxquux');
+});
+
+test('computed is also a ref', () => {
+    const foo = ref('bar');
+    const baz = computed([foo], () => foo.value + 'baz');
+    expect(isRef(baz)).toBe(true);
+});
+
+test('computed unref', () => {
+    const foo = ref('bar');
+    const baz = computed([foo], () => foo.value + 'baz');
+    expect(unref(baz)).toBe('barbaz');
 });
