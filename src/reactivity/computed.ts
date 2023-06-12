@@ -5,8 +5,20 @@ import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
 export type UnwrapComputed<T> = T extends MechanusComputedRef<infer U> ? U : T;
 
 export class MechanusComputedRef<T = any> {
+    /**
+     * Computed ref dependencies.
+     * @internal
+     */
     readonly __deps = new Set<ReactiveEffect<T>>();
+    /**
+     * Computed ref symbol key.
+     * @internal
+     */
     readonly __symbol: symbol;
+    /**
+     * Computed ref effect.
+     * @internal
+     */
     readonly __effect: ReactiveEffect<T>;
 
     #value!: T;
@@ -24,6 +36,12 @@ export class MechanusComputedRef<T = any> {
         computedRef.__deps.forEach((effect) => effect.run(value, oldValue));
     };
 
+    /**
+     * Updates the computed ref value.
+     * @internal
+     * @param symbolKey Symbol key to check if it matches the computed ref symbol key.
+     * @param newValue Computed ref new value.
+     */
     public __update(symbolKey: symbol, newValue: T) {
         if (symbolKey !== this.__symbol) {
             throw new MechanusComputedRefError('Computed ref symbol key does not match.');

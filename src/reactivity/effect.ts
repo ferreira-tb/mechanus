@@ -76,6 +76,14 @@ export function watch<T>(
     return () => effect.stop();
 };
 
+export function watchAsync<T>(
+    source: MechanusRefOrComputedRef<T>,
+    callback: ReactiveCallback<T>,
+    options: Omit<WatchOptions, 'sync'> = {}
+): () => void {
+    return watch(source, callback, { ...options, sync: false });
+};
+
 /** Same as `watch` but triggers the callback immediately on watcher creation. */
 export function watchImmediate<T>(
     source: MechanusRefOrComputedRef<T>,

@@ -10,6 +10,10 @@ export type ReadonlyMechanusRef<T = any> = Omit<MechanusRef<T>, 'value'> & {
 };
 
 export class MechanusRef<T = any> {
+    /**
+     * Ref dependencies.
+     * @internal
+     */
     readonly __deps = new Set<ReactiveEffect<T>>();
     
     #value: T;
