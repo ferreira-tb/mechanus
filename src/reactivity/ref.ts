@@ -2,9 +2,10 @@ import { ReactiveEffect } from '@/reactivity/effect';
 import { MechanusComputedRef } from '@/reactivity/computed';
 
 export type UnwrapRef<T> = T extends MechanusRef<infer R> ? R : T;
+export type UnwrapReadonlyRef<T> = T extends ReadonlyMechanusRef<infer R> ? R : T;
 export type MechanusRefOrComputedRef<T = any> = MechanusRef<T> | MechanusComputedRef<T> | ReadonlyMechanusRef<T>;
 
-export type ReadonlyMechanusRef<T> = Omit<MechanusRef<T>, 'value'> & {
+export type ReadonlyMechanusRef<T = any> = Omit<MechanusRef<T>, 'value'> & {
     readonly value: T;
 };
 

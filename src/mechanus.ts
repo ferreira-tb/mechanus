@@ -1,13 +1,33 @@
-import { MechanusRef, UnwrapRef, unref, isRef } from '@/reactivity/ref';
+import { MechanusRef, unref, isRef } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
-import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
+import type { MechanusRefOrComputedRef, ReadonlyMechanusRef, UnwrapReadonlyRef, UnwrapRef } from '@/reactivity/ref';
 import type { UnwrapComputed, MechanusComputedRef } from '@/reactivity/computed';
+
+export type StoreAction = (...args: any[]) => any;
 
 export type StoreRawValues<T = any> = {
     [K in keyof T]:
         T[K] extends MechanusRef ? UnwrapRef<T[K]> :
+        T[K] extends ReadonlyMechanusRef ? UnwrapReadonlyRef<T[K]> :
         T[K] extends MechanusComputedRef ? UnwrapComputed<T[K]> :
-        T[K];
+        T[K] extends StoreAction ? T[K] :
+        never;
+};
+
+export type StoreRawValuesWithoutActions<T = any> = {
+    [K in keyof T]:
+        T[K] extends MechanusRef ? UnwrapRef<T[K]> :
+        T[K] extends ReadonlyMechanusRef ? UnwrapReadonlyRef<T[K]> :
+        T[K] extends MechanusComputedRef ? UnwrapComputed<T[K]> :
+        never;
+};
+
+export interface MechanusStoreRawOptions {
+    /**
+     * Whether to include non-ref methods in the raw store.
+     * @default false
+     */
+    readonly actions?: boolean;
 };
 
 export type MechanusStore<T = any> = StoreRawValues<T> & {
@@ -17,14 +37,15 @@ export type MechanusStore<T = any> = StoreRawValues<T> & {
      */
     $patch(partialState: Partial<StoreRawValues<T>>): void;
     /**
-     * Convert the store to a plain object that can be cloned.
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
+     * Convert the store to a plain object.
      */
-    $raw(): StoreRawValues<T>;
-}
+    $raw<U extends MechanusStoreRawOptions>(
+        options?: U
+    ): U['actions'] extends true ? StoreRawValues<T> : StoreRawValuesWithoutActions<T>;
+};
 
 export type StoreRefs<R = any> = {
-    [K: string]: MechanusRefOrComputedRef<R>;
+    [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
 };
 
 export class Mechanus {
@@ -40,9 +61,9 @@ export class Mechanus {
                 } else if (key === '__mech__raw') {
                     return store;
                 } else if (key === '$patch') {
-                    return (partialState: Partial<StoreRawValues<T>>): void => self.#patch(store, partialState);
+                    return (partialState: Partial<StoreRawValues<T>>) => self.#patch(store, partialState);
                 } else if (key === '$raw') {
-                    return (): StoreRawValues<T> => self.#raw(store);
+                    return (options?: MechanusStoreRawOptions) => self.#raw(store, options);
                 } else if (key in target) {
                     const item = Reflect.get(target, key);
                     return unref(item);
@@ -74,11 +95,15 @@ export class Mechanus {
         };
     };
 
-    #raw<T extends StoreRefs>(store: MechanusStore): StoreRawValues<T> {
-        return Object.entries(store).reduce((acc, [key, value]) => {
-            acc[key as keyof T] = unref(value);
-            return acc;
-        }, {} as StoreRawValues<T>);
+    #raw<T extends StoreRefs>(store: MechanusStore, options: MechanusStoreRawOptions = {}): StoreRawValues<T> {
+        const raw = {} as StoreRawValues<T>;
+        const { actions = false } = options;
+        for (const [key, value] of Object.entries(store)) {
+            if (!isRef(value) && !actions) continue;
+            raw[key as keyof T] = unref(value);
+        };
+
+        return raw;
     };
 
     public define<T extends StoreRefs>(name: string, refs: T): () => MechanusStore<T>;

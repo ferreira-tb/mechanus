@@ -308,3 +308,41 @@ test('cannot set non-ref properties', () => {
     expect(() => (store.$patch = () => void 0)).toThrow();
     expect(() => (store.$raw = () => void 0 as any)).toThrow();
 });
+
+test('raw does not include actions', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        const baz = () => foo.value + bar.value;
+
+        return { foo, bar, baz };
+    });
+
+    const store = useStore();
+
+    const raw = store.$raw({ actions: false });
+
+    expect(raw).toEqual({ foo: 'foo', bar: 'bar' });
+    expect(raw.baz).toBeUndefined();
+});
+
+test('raw includes actions', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        const baz = () => foo.value + bar.value;
+
+        return { foo, bar, baz };
+    });
+
+    const store = useStore();
+    
+    const raw = store.$raw({ actions: true });
+    expect(raw.baz).toBeInstanceOf(Function);
+});
