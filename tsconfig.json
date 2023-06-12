@@ -13,32 +13,27 @@
             "@/*": ["./src/*"]
         },
 
-        // Modo estrito
-        "noEmitOnError": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": true,
+        
         "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
-        "strictFunctionTypes": true,
         "strictPropertyInitialization": true,
         "useUnknownInCatchVariables": true,
-        
-        // Código não utilizado
         "noUnusedParameters": true,
         "noUnusedLocals": true,
         "allowUnusedLabels": false,
         "allowUnreachableCode": false,
-
-        // Código implícito
         "noImplicitOverride": true,
         "noImplicitReturns": true,
-
-        // Outros
         "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "forceConsistentCasingInFileNames": true,
-        "noUncheckedIndexedAccess": true,
-        "removeComments": false
+        "noEmitOnError": true,
     }
 }

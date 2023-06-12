@@ -1,7 +1,13 @@
 import { MechanusRef, unref, isRef } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
-import type { MechanusRefOrComputedRef, ReadonlyMechanusRef, UnwrapReadonlyRef, UnwrapRef } from '@/reactivity/ref';
-import type { UnwrapComputed, MechanusComputedRef } from '@/reactivity/computed';
+import type { 
+    MechanusComputedRef,
+    MechanusRefOrComputedRef,
+    ReadonlyMechanusRef,
+    UnwrapComputed,
+    UnwrapReadonlyRef,
+    UnwrapRef
+} from '@/reactivity/ref';
 
 export type StoreAction = (...args: any[]) => any;
 

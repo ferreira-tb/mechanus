@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
 import { Mechanus, storeToRefs } from '@/mechanus';
-import { ref } from '@/reactivity/ref';
-import { computed } from '@/reactivity/computed';
+import { computed, ref } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
 
 test('store', () => {

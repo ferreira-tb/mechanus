@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
-import { isRef, ref, unref } from '@/reactivity/ref';
-import { computed } from '@/reactivity/computed';
+import { computed, isRef, ref, unref } from '@/reactivity/ref';
 
 test('computed', () => {
     const foo = ref('bar');
