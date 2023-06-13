@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import { computed, isRef, ref, unref } from '@/reactivity/ref';
+import { computedAsync } from '@/utils';
 
 test('computed', () => {
     const foo = ref('bar');
@@ -57,4 +58,20 @@ test('computed unref', () => {
     const foo = ref('bar');
     const baz = computed([foo], () => foo.value + 'baz');
     expect(unref(baz)).toBe('barbaz');
+});
+
+
+test('computedAsync', async () => {
+    const foo = ref('bar');
+    const baz = computedAsync(foo, 5, () => Promise.resolve(foo.value.length));
+    expect(baz.value).toBe(5);
+
+    await Promise.resolve();
+    expect(baz.value).toBe(3);
+
+    foo.value = 'bazzzzzzz';
+    expect(baz.value).toBe(3);
+
+    await Promise.resolve();
+    expect(baz.value).toBe(9);
 });

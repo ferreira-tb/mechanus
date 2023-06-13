@@ -1,8 +1,7 @@
-import { watchImmediate } from '@/reactivity/effect';
-import { promiseTimeout } from '@/utils/promise-timeout';
-import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
+import { watch } from '@/reactivity/effect';
+import { promiseTimeout } from '@/utils/helpers';
 
-export type UntilOptions = {
+export interface UntilOptions {
     /**
      * Milliseconds timeout for promise to resolve/reject if the condition does not meet.
      * If `0`, the promise will never timeout.
@@ -21,13 +20,12 @@ export type UntilOptions = {
     timeoutReason?: string
 };
 
-export type TypeOfValues = 'bigint' | 'boolean' | 'function' | 'number' | 'object' | 'string' | 'symbol' | 'undefined';
-
 export function until<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
     return {
         toBe: toBe(mechanusRef),
         toBeFalsy: toBeFalsy(mechanusRef),
         toBeInstanceOf: toBeInstanceOf(mechanusRef),
+        toMatch: toMatch(mechanusRef),
         toBeNull: toBeNull(mechanusRef),
         toBeTruthy: toBeTruthy(mechanusRef),
         toBeTypeOf: toBeTypeOf(mechanusRef)
@@ -38,12 +36,12 @@ function toMatch<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
     return function(condition: (value: T) => boolean, options: UntilOptions = {}): Promise<void> {
         let stopWatcher: (() => void) | null = null;
         const watcher = new Promise<void>((resolve) => {
-            stopWatcher = watchImmediate(mechanusRef, (newValue) => {
+            stopWatcher = watch(mechanusRef, (newValue) => {
                 if (condition(newValue)){
                     stopWatcher?.();
                     resolve();
                 };
-            });
+            }, { immediate: true });
         });
 
         if (typeof options.timeout !== 'number') options.timeout = 0;
@@ -92,7 +90,10 @@ function toBeTruthy<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
 };
 
 function toBeTypeOf<T>(mechanusRef: MechanusRefOrComputedRef<T>) {
-    return function(expectedType: TypeOfValues, options: UntilOptions = {}) {
+    return function(
+        expectedType: 'bigint' | 'boolean' | 'function' | 'number' | 'object' | 'string' | 'symbol' | 'undefined',
+        options: UntilOptions = {}
+    ) {
         return toMatch(mechanusRef)((value) => typeof value === expectedType, options);
     };
 };

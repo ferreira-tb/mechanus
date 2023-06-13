@@ -1,15 +1,6 @@
 import { ReactiveEffect } from '@/reactivity/effect';
 import { MechanusComputedRefError } from '@/errors';
 
-export type UnwrapRef<T> = T extends MechanusRef<infer R> ? R : T;
-export type UnwrapReadonlyRef<T> = T extends ReadonlyMechanusRef<infer R> ? R : T;
-export type UnwrapComputed<T> = T extends MechanusComputedRef<infer U> ? U : T;
-export type MechanusRefOrComputedRef<T = any> = MechanusRef<T> | MechanusComputedRef<T> | ReadonlyMechanusRef<T>;
-
-export type ReadonlyMechanusRef<T = any> = Omit<MechanusRef<T>, 'value'> & {
-    readonly value: T;
-};
-
 export class MechanusRef<T = any> {
     /**
      * Ref dependencies.
@@ -95,17 +86,21 @@ export function ref<T>(value: T): MechanusRef<T> {
     return new MechanusRef(value);
 };
 
-export function computed<T>(refs: MechanusRefOrComputedRef[], computedValue: () => T): MechanusComputedRef<T> {
+export function computed<T>(
+    refs: MechanusRefOrComputedRef | MechanusRefOrComputedRef[],
+    getter: () => T
+): MechanusComputedRef<T> {
     const symbol = Symbol();
     const effect = new ReactiveEffect<T>(update);
     const computedRef = new MechanusComputedRef<T>(symbol, effect);
     update();
 
     function update() {
-        const newValue = computedValue();
+        const newValue = getter();
         computedRef.__update(symbol, newValue);
     };
 
+    if (!Array.isArray(refs)) refs = [refs];
     refs.forEach((ref) => ref.__deps.add(effect));
     return computedRef;
 };

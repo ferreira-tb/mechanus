@@ -1,5 +1,12 @@
 {
-    "include": ["src/**/*.ts", "test/**/*.ts"],
+    "include": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "typings/**/*.d.ts"
+    ],
+    "exclude": [
+        "dist/**/*"
+    ],
     "compilerOptions": {
         "types": ["node"],
         "lib": ["esnext"],
@@ -7,7 +14,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "outDir": "dist",
-        "declaration": false,
+        "declaration": true,
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]

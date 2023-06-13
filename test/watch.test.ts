@@ -1,6 +1,13 @@
 import { expect, test } from 'vitest';
 import { ref } from '@/reactivity/ref';
-import { watch, watchAsync, watchImmediate, watchOnce } from '@/reactivity/effect';
+import { watch } from '@/reactivity/effect';
+import {
+    watchAsync,
+    watchImmediate,
+    watchOnce,
+    whenever,
+    wheneverImmediate
+} from '@/utils';
 
 test('watch', () => {
     const foo = ref('bar');
@@ -136,4 +143,64 @@ test('multiple watch async', async () => {
 
     await Promise.resolve();
     expect(count).toBe(6);
+});
+
+test('whenever', () => {
+    const foo = ref<boolean | null | string>(false);
+    let count = 0;
+
+    whenever(foo, (w) => {
+        expect(w).toBeTruthy();
+        count++;
+    });
+
+    expect(count).toBe(0);
+
+    foo.value = true;
+    expect(count).toBe(1);
+
+    foo.value = false;
+    expect(count).toBe(1);
+
+    foo.value = true;
+    expect(count).toBe(2);
+});
+
+test('whenever immediate', () => {
+    const foo = ref<boolean | null | string>(false);
+    let count = 0;
+
+    wheneverImmediate(foo, (w) => {
+        expect(w).toBeTruthy();
+        count++;
+    });
+
+    expect(count).toBe(0);
+
+    foo.value = true;
+    expect(count).toBe(1);
+
+    foo.value = false;
+    expect(count).toBe(1);
+
+    foo.value = true;
+    expect(count).toBe(2);
+});
+
+test('whenever immediate (initial value is truthy)', () => {
+    const foo = ref<boolean | null | string>(true);
+    let count = 0;
+
+    wheneverImmediate(foo, (w) => {
+        expect(w).toBeTruthy();
+        count++;
+    });
+
+    expect(count).toBe(1);
+
+    foo.value = false;
+    expect(count).toBe(1);
+
+    foo.value = true;
+    expect(count).toBe(2);
 });

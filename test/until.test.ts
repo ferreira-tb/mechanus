@@ -147,3 +147,27 @@ test('until to be typeof (throw on timeout)', async () => {
     expect(foo.value).toBeTypeOf('string');
     clearTimeout(timeout);
 });
+
+test('until to match arbitrary condition', async () => {
+    const foo = ref<any>('bar');
+
+    queueMicrotask(() => (foo.value = 'baz'));
+    await until(foo).toMatch((value) => value === 'baz');
+    expect(foo.value).toBe('baz');
+
+    queueMicrotask(() => (foo.value = new Date()));
+    await until(foo).toMatch((value) => value instanceof Date);
+    expect(foo.value).toBeInstanceOf(Date);
+
+    queueMicrotask(() => (foo.value = null));
+    await until(foo).toMatch((value) => value === null);
+    expect(foo.value).toBeNull();
+
+    queueMicrotask(() => (foo.value = 123));
+    await until(foo).toMatch((value) => value === 123);
+    expect(foo.value).toBe(123);
+
+    queueMicrotask(() => (foo.value = undefined));
+    await until(foo).toMatch((value) => value === undefined);
+    expect(foo.value).toBeUndefined();
+});

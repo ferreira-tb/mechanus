@@ -1,58 +1,5 @@
-import { MechanusRef, isReadonly, unref, isRef } from '@/reactivity/ref';
+import { isReadonly, unref, isRef } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
-import type { 
-    MechanusComputedRef,
-    MechanusRefOrComputedRef,
-    ReadonlyMechanusRef,
-    UnwrapComputed,
-    UnwrapReadonlyRef,
-    UnwrapRef
-} from '@/reactivity/ref';
-
-export type StoreAction = (...args: any[]) => any;
-
-export type StoreRawValues<T = any> = {
-    [K in keyof T]:
-        T[K] extends MechanusRef ? UnwrapRef<T[K]> :
-        T[K] extends ReadonlyMechanusRef ? UnwrapReadonlyRef<T[K]> :
-        T[K] extends MechanusComputedRef ? UnwrapComputed<T[K]> :
-        T[K] extends StoreAction ? T[K] :
-        never;
-};
-
-export type StoreRawValuesWithoutActions<T = any> = {
-    [K in keyof T]:
-        T[K] extends MechanusRef ? UnwrapRef<T[K]> :
-        T[K] extends ReadonlyMechanusRef ? UnwrapReadonlyRef<T[K]> :
-        T[K] extends MechanusComputedRef ? UnwrapComputed<T[K]> :
-        never;
-};
-
-export interface MechanusStoreRawOptions {
-    /**
-     * Whether to include non-ref methods in the raw store.
-     * @default false
-     */
-    readonly actions?: boolean;
-};
-
-export type MechanusStore<T = any> = StoreRawValues<T> & {
-    /**
-     * Patch the store with a partial state.
-     * @param partialState The partial state to patch the store with.
-     */
-    $patch(partialState: Partial<StoreRawValues<T>>): void;
-    /**
-     * Convert the store to a plain object.
-     */
-    $raw<U extends MechanusStoreRawOptions>(
-        options?: U
-    ): U['actions'] extends true ? StoreRawValues<T> : StoreRawValuesWithoutActions<T>;
-};
-
-export type StoreRefs<R = any> = {
-    [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
-};
 
 export class Mechanus {
     readonly #stores = new Map<string, MechanusStore>();
