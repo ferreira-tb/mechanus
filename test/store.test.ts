@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { Mechanus, storeToRefs } from '@/mechanus';
-import { computed, ref } from '@/reactivity/ref';
+import { computed, isReadonly, ref, readonly } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
 
 test('store', () => {
@@ -344,4 +344,113 @@ test('raw includes actions', () => {
     
     const raw = store.$raw({ actions: true });
     expect(raw.baz).toBeInstanceOf(Function);
+});
+
+test('raw is the same as spread', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+
+    const raw = store.$raw();
+    const spread = { ...store };
+
+    expect(raw).toEqual(spread);
+});
+
+test('raw is the same as spread, even after patching', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+    store.$patch({ foo: 'baz' });
+
+    const raw = store.$raw();
+    const spread = { ...store };
+
+    expect(raw).toEqual(spread);
+});
+
+test('patch wont overwrite actions', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+
+        const bar = () => foo.value;
+
+        return { foo, bar };
+    });
+
+    const store = useStore();
+    store.$patch({ bar: () => 'baz' });
+
+    expect(store.bar()).toBe('foo');
+});
+
+test('extracted readonly refs are readonly', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = computed([foo], () => foo.value);
+        const baz = readonly(foo);
+
+        return { foo, bar, baz };
+    });
+
+    const store = useStore();
+    const { foo, bar, baz } = storeToRefs(store);
+
+    expect(isReadonly(foo)).toBe(false);
+    expect(isReadonly(bar)).toBe(true);
+    expect(isReadonly(baz)).toBe(true);
+
+    expect(() => ((bar as any).value = 'bar')).toThrow();
+
+    (baz as any).value = 'baz';
+    expect(baz.value).toBe('foo');
+});
+
+test('patch wont overwrite readonly refs', () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = computed([foo], () => foo.value);
+        const baz = readonly(foo);
+
+        return { foo, bar, baz };
+    });
+
+    const store = useStore();
+
+    store.$patch({ bar: 'baz' });
+    expect(store.bar).toBe('foo');
+    expect(store.$raw().bar).toBe('foo');
+    expect({ ...store }.bar).toBe('foo');
+
+    store.$patch({ baz: 'baz' });
+    expect(store.baz).toBe('foo');
+    expect(store.$raw().baz).toBe('foo');
+    expect({ ...store }.baz).toBe('foo');
+
+    expect(store.$raw()).toEqual({ foo: 'foo', bar: 'foo', baz: 'foo' });
+    expect({ ...store }).toEqual({ foo: 'foo', bar: 'foo', baz: 'foo' });
+
+    store.$patch({ foo: 'bazz', bar: 'nwah', baz: 'qux' });
+    expect(store.$raw()).toEqual({ foo: 'bazz', bar: 'bazz', baz: 'bazz' });
+    expect({ ...store }).toEqual({ foo: 'bazz', bar: 'bazz', baz: 'bazz' });
 });

@@ -91,7 +91,7 @@ export class MechanusComputedRef<T = any> {
 
 /** Creates a MechanusRef. */
 export function ref<T>(value: T): MechanusRef<T> {
-    if (isRef(value)) return value;
+    if (isRef<T>(value)) return value;
     return new MechanusRef(value);
 };
 
@@ -111,9 +111,9 @@ export function computed<T>(refs: MechanusRefOrComputedRef[], computedValue: () 
 };
 
 /** Checks if a value is a MechanusRef. */
-export function isRef<T>(value: MechanusRef<T> | T): value is MechanusRef<T>;
-export function isRef<T>(value: ReadonlyMechanusRef<T> | T): value is ReadonlyMechanusRef<T>;
-export function isRef<T>(value: MechanusComputedRef<T> | T): value is MechanusComputedRef<T>;
+export function isRef<T>(value: MechanusRef<T> | unknown): value is MechanusRef<T>;
+export function isRef<T>(value: ReadonlyMechanusRef<T> | unknown): value is ReadonlyMechanusRef<T>;
+export function isRef<T>(value: MechanusComputedRef<T> | unknown): value is MechanusComputedRef<T>;
 export function isRef(value: unknown): value is MechanusRef {
     return Boolean(value && (value instanceof MechanusRef || value instanceof MechanusComputedRef));
 };
@@ -133,11 +133,25 @@ export function unref(item: unknown) {
 export function readonly<T>(ref: MechanusRef<T>): ReadonlyMechanusRef<T> {
     return new Proxy(ref, {
         get(target, key) {
+            if (key === '__isReadonly') return true;
             return Reflect.get(target, key);
         },
         set(target, key, value) {
-            if (key === 'value') return true;
+            if (key === 'value' || key === '__isReadonly') return true;
             return Reflect.set(target, key, value);
         }
     });
+};
+
+/**
+ * Checks if a value is a readonly ref.
+ * Computed refs are always considered readonly.
+ */
+export function isReadonly(value: unknown): boolean {
+    if (value instanceof MechanusComputedRef) return true;
+    if (value instanceof MechanusRef) {
+        return (value as any).__isReadonly || false;
+    };
+
+    return false;
 };

@@ -1,5 +1,5 @@
 export { Mechanus, storeToRefs } from '@/mechanus';
-export { computed, readonly, ref, isRef, unref } from '@/reactivity/ref';
+export { computed, isReadonly, readonly, ref, isRef, unref } from '@/reactivity/ref';
 export { watch, watchAsync, watchImmediate, watchOnce } from '@/reactivity/effect';
 export { until, promiseTimeout } from '@/utils';
 

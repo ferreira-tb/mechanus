@@ -1,4 +1,4 @@
-import { MechanusRef, unref, isRef } from '@/reactivity/ref';
+import { MechanusRef, isReadonly, unref, isRef } from '@/reactivity/ref';
 import { MechanusStoreError } from '@/errors';
 import type { 
     MechanusComputedRef,
@@ -95,9 +95,11 @@ export class Mechanus {
         })
     };
 
-    #patch<T extends StoreRefs, U extends MechanusStore<T>>(store: U, partialState: Partial<U>): void {
+    #patch<T extends StoreRefs, U extends MechanusStore<T>>(store: T, partialState: Partial<U>): void {
         for (const [key, value] of Object.entries(partialState) as [keyof U, U[keyof U]][]) {
-            store[key] = value;
+            const item = store[key as keyof T];
+            if (!isRef(item) || isReadonly(item)) continue;
+            item.value = value;
         };
     };
 

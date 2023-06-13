@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { readonly, ref, isRef, unref, MechanusRef } from '@/reactivity/ref';
+import { computed, isReadonly, readonly, ref, isRef, unref, MechanusRef } from '@/reactivity/ref';
 import { watch } from '@/reactivity/effect';
 
 test('ref', () => {
@@ -19,6 +19,9 @@ test('isRef', () => {
     const foo = ref('bar');
     expect(isRef(foo)).toBe(true);
     expect(isRef('baz')).toBe(false);
+
+    const bar: unknown = { value: 'baz' };
+    expect(isRef(bar)).toBe(false);
 });
 
 test('unref', () => {
@@ -66,4 +69,23 @@ test('can watch readonly ref', () => {
 
     foo.value = 'baz';
     expect(count).toBe(1);
+});
+
+test('isReadonly', () => {
+    const foo = ref('bar');
+    const readonlyFoo = readonly(foo);
+    const computedBar = computed([foo], () => foo.value + 'qux');
+
+    expect(isReadonly(readonlyFoo)).toBe(true);
+    expect(isReadonly(computedBar)).toBe(true);
+    expect(isReadonly(foo)).toBe(false);
+    expect(isReadonly('baz')).toBe(false);
+});
+
+test('unref readonly ref', () => {
+    const foo = ref('bar');
+    const readonlyFoo = readonly(foo);
+    expect(readonlyFoo.value).toBe('bar');
+    expect(unref(readonlyFoo)).toBe('bar');
+    expect(unref('baz')).toBe('baz');
 });
