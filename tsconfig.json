@@ -1,8 +1,7 @@
 {
     "include": [
         "src/**/*.ts",
-        "test/**/*.ts",
-        "typings/**/*.d.ts"
+        "test/**/*.ts"
     ],
     "exclude": [
         "dist/**/*"
@@ -14,7 +13,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "outDir": "dist",
-        "declaration": true,
+        "declaration": false,
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]

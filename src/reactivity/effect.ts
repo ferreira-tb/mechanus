@@ -1,3 +1,32 @@
+import type { MechanusRefOrComputedRef } from '@/reactivity/ref';
+
+export type ReactiveCallback<V, OV> = (value: V, oldValue: OV) => void;
+
+export interface EffectOptions<Immediate = boolean> {
+    /**
+     * Trigger the callback immediately on watcher creation.
+     * Old value will be undefined on the first call.
+     * @default false
+     */
+    immediate?: Immediate;
+    /**
+     * Only run the callback once.
+     * @default false
+     */
+    once?: boolean;
+    /**
+     * Run the callback synchronously.
+     * If false, the callback will be run asynchronously via queueMicrotask.
+     * @default true
+     */
+    sync?: boolean;
+};
+
+export type WatchSource<T> = MechanusRefOrComputedRef<T>;
+export type WatchCallback<V, OV> = ReactiveCallback<V, OV>;
+export type WatchOptions<Immediate = boolean> = EffectOptions<Immediate>;
+export type WatchStopHandle = () => void;
+
 export class ReactiveEffect<T = any> {
     readonly #callback: ReactiveCallback<T, T>;
     

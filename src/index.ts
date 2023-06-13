@@ -21,5 +21,26 @@ export {
     wheneverImmediate
 } from '@/utils';
 
-export type { MechanusComputedRef, MechanusRef } from '@/reactivity';
-export type { ComputedAsyncOptions, UntilOptions } from '@/utils';
+export type {
+    MechanusStore,
+    MechanusStoreRawOptions,
+    StoreAction,
+    StoreRawValues,
+    StoreRawValuesWithoutActions,
+    StoreRefs
+} from '@/mechanus';
+
+export type {
+    MechanusComputedRef,
+    MechanusRef,
+    MechanusRefOrComputedRef,
+    ReadonlyMechanusRef,
+    UnwrapComputedRef,
+    UnwrapReadonlyRef,
+    UnwrapRef
+} from '@/reactivity';
+
+export type {
+    ComputedAsyncOptions,
+    UntilOptions
+} from '@/utils';

@@ -1,5 +1,10 @@
-import { readonly, ref } from '@/reactivity/ref';
-import { watch } from '@/reactivity/effect';
+import {
+    readonly,
+    ref,
+    watch,
+    type MechanusRefOrComputedRef,
+    type ReadonlyMechanusRef
+} from '@/reactivity';
 
 export interface ComputedAsyncOptions {
     /**

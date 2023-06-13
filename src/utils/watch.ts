@@ -1,4 +1,10 @@
-import { watch } from '@/reactivity/effect';
+import {
+    watch,
+    type WatchCallback,
+    type WatchOptions,
+    type WatchSource,
+    type WatchStopHandle
+} from '@/reactivity';
 
 export function watchAsync<T, Immediate extends Readonly<boolean> = false>(
     source: WatchSource<T>,

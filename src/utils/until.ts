@@ -1,4 +1,4 @@
-import { watch } from '@/reactivity/effect';
+import { watch, type MechanusRefOrComputedRef } from '@/reactivity';
 import { promiseTimeout } from '@/utils/helpers';
 
 export interface UntilOptions {
