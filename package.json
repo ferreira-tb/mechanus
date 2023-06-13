@@ -31,7 +31,7 @@
         "vitest": "^0.32.0"
     },
     "scripts": {
-        "build": "rollup -c && node scripts/build.mjs",
+        "build": "rollup -c",
         "test": "vitest",
         "test:ui": "vitest --ui",
         "taze": "npx taze -w && npm install"
