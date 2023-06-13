@@ -38,7 +38,11 @@ export type {
     ReadonlyMechanusRef,
     UnwrapComputedRef,
     UnwrapReadonlyRef,
-    UnwrapRef
+    UnwrapRef,
+    WatchCallback,
+    WatchOptions,
+    WatchSource,
+    WatchStopHandle
 } from '@/reactivity';
 
 export type {
