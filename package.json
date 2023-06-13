@@ -39,5 +39,5 @@
     "files": [
         "dist/**/*"
     ],
-    "types": "dist/src/index.d.ts"
+    "types": "dist/index.d.ts"
 }
