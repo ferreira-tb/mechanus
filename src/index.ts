@@ -18,6 +18,7 @@ export {
     watchImmediate,
     watchOnce,
     whenever,
+    wheneverAsync,
     wheneverImmediate
 } from '@/utils';
 

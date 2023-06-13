@@ -6,6 +6,7 @@ import {
     watchImmediate,
     watchOnce,
     whenever,
+    wheneverAsync,
     wheneverImmediate
 } from '@/utils';
 
@@ -202,5 +203,32 @@ test('whenever immediate (initial value is truthy)', () => {
     expect(count).toBe(1);
 
     foo.value = true;
+    expect(count).toBe(2);
+});
+
+test('whenever async', async () => {
+    const foo = ref<boolean | null | string>(false);
+    let count = 0;
+
+    wheneverAsync(foo, (w) => {
+        expect(w).toBeTruthy();
+        count++;
+    });
+
+    expect(count).toBe(0);
+
+    foo.value = true;
+    expect(count).toBe(0);
+
+    await Promise.resolve();
+    expect(count).toBe(1);
+
+    foo.value = false;
+    expect(count).toBe(1);
+
+    foo.value = true;
+    expect(count).toBe(1);
+
+    await Promise.resolve();
     expect(count).toBe(2);
 });

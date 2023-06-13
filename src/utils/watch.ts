@@ -43,6 +43,15 @@ export function whenever<T, Immediate extends Readonly<boolean> = false>(
     }, options);
 };
 
+/** Shorthand for asynchronously watching value to be truthy. */
+export function wheneverAsync<T, Immediate extends Readonly<boolean> = false>(
+    source: WatchSource<T | false | null | undefined>,
+    callback: WatchCallback<T, unknown>,
+    options: Omit<WatchOptions<Immediate>, 'sync'> = {}
+): WatchStopHandle {
+    return whenever(source, callback, { ...options, sync: false });
+};
+
 /** Shorthand for immediately watching value to be truthy. */
 export function wheneverImmediate<T>(
     source: WatchSource<T | false | null | undefined>,
