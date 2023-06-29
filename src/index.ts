@@ -23,9 +23,11 @@ export {
 } from '@/utils';
 
 export type {
+    DefineStoreReturn,
     MechanusStore,
     MechanusStoreRawOptions,
     StoreAction,
+    StorePartialState,
     StoreRawValues,
     StoreRawValuesWithoutActions,
     StoreRefs

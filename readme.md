@@ -1,5 +1,5 @@
 # Mechanus
-Mechanus is a very simple and unpretentious package for achieving reactive state management in Node.js environments. It is inspired by the outstanding [Vue.js](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#ref) reactive system.
+Mechanus is a very simple and unpretentious package for achieving reactive state management in any javascript environment. It is inspired by the outstanding [Vue.js](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#ref) reactive system.
 
 ## Installation
 ```bash

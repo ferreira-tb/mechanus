@@ -39,12 +39,14 @@ export interface MechanusStoreRawOptions {
     readonly actions?: boolean;
 };
 
+export type StorePartialState<T = any> = Partial<StoreRawValues<T>>;
+
 export type MechanusStore<T = any> = StoreRawValues<T> & {
     /**
      * Patch the store with a partial state.
      * @param partialState The partial state to patch the store with.
      */
-    $patch(partialState: Partial<StoreRawValues<T>>): void;
+    $patch(partialState: StorePartialState<T>): void;
     /**
      * Convert the store to a plain object.
      */
@@ -56,6 +58,8 @@ export type MechanusStore<T = any> = StoreRawValues<T> & {
 export type StoreRefs<R = any> = {
     [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
 };
+
+export type DefineStoreReturn<T extends StoreRefs> = (patchFn?: (() => StorePartialState<T>) | null) => MechanusStore<T>;
 
 export class Mechanus {
     readonly #stores = new Map<string, MechanusStore>();
@@ -117,9 +121,10 @@ export class Mechanus {
         return raw;
     };
 
-    public define<T extends StoreRefs>(name: string, refs: T): () => MechanusStore<T>;
-    public define<T extends StoreRefs>(name: string, storeSetup: () => T): () => MechanusStore<T>;
-    public define<T extends StoreRefs>(name: string, storeSetupOrRefs: (() => T) | T): () => MechanusStore<T> {
+    /** Define a new store. */
+    public define<T extends StoreRefs>(name: string, refs: T): DefineStoreReturn<T>;
+    public define<T extends StoreRefs>(name: string, storeSetup: () => T): DefineStoreReturn<T>;
+    public define<T extends StoreRefs>(name: string, storeSetupOrRefs: (() => T) | T): DefineStoreReturn<T> {
         if (this.#stores.has(name)) {
             throw new MechanusStoreError(`Store "${name}" is already defined.`);
         };
@@ -128,13 +133,26 @@ export class Mechanus {
         const store = this.#createStore<T>(storeRefs);
         this.#stores.set(name, store);
 
-        return (): MechanusStore<T> => this.use<T>(name);
+        return (patchFn = null) => this.use<T>(name, patchFn);
     };
 
-    public use<T extends StoreRefs>(name: string): MechanusStore<T> {
-        const store = this.#stores.get(name);
+    /**
+     * Use an already defined store.
+     * @param name Name of the store.
+     * @param patchFn A function that returns a partial state to patch the store with.
+     * This will always be called asynchronously.
+     */
+    public use<T extends StoreRefs>(name: string, patchFn: (() => StorePartialState<T>) | null = null): MechanusStore<T> {
+        const store = this.#stores.get(name) as MechanusStore<T>;
         if (!store) throw new MechanusStoreError(`Store "${name}" is not defined.`);
-        return store as MechanusStore<T>;
+
+        if (typeof patchFn === 'function') {
+            Promise.resolve().then(patchFn).then((partialState) => {
+                store.$patch(partialState);
+            });
+        }
+        
+        return store;
     };
 };
 
