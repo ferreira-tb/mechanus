@@ -158,7 +158,7 @@ export function readonly<T>(ref: MechanusRef<T>): ReadonlyMechanusRef<T> {
 export function isReadonly(value: unknown): boolean {
     if (value instanceof MechanusComputedRef) return true;
     if (value instanceof MechanusRef) {
-        return (value as any).__isReadonly || false;
+        return Boolean((value as any).__isReadonly);
     };
 
     return false;
