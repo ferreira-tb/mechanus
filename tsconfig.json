@@ -7,17 +7,17 @@
         "dist/**/*"
     ],
     "compilerOptions": {
-        "types": ["node"],
-        "lib": ["esnext"],
-        "target": "esnext",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "outDir": "dist",
-        "declaration": false,
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         },
+
+        "target": "esnext",
+        "lib": ["esnext"],
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "outDir": "dist",
+        "declaration": false,
 
         "resolveJsonModule": true,
         "esModuleInterop": true,
@@ -31,15 +31,22 @@
         "strictBindCallApply": true,
         "strictPropertyInitialization": true,
         "useUnknownInCatchVariables": true,
+
         "noUnusedParameters": true,
         "noUnusedLocals": true,
         "allowUnusedLabels": false,
         "allowUnreachableCode": false,
+
         "noImplicitOverride": true,
         "noImplicitReturns": true,
+
         "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "forceConsistentCasingInFileNames": true,
         "noEmitOnError": true,
+
+        "types": [
+            "node"
+        ]
     }
 }
