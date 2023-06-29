@@ -472,3 +472,21 @@ test('use store with patch function', async () => {
     expect(store.bar).toBe('qux');
     expect(store.$raw()).toEqual({ foo: 'baz', bar: 'qux' });
 });
+
+test('use store with patch function (async)', async () => {
+    const mech = new Mechanus();
+
+    const useStore = mech.define('store', () => {
+        const foo = ref('foo');
+        const bar = ref('bar');
+
+        return { foo, bar };
+    });
+
+    const store = useStore(() => Promise.resolve({ foo: 'baz', bar: 'qux' }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.foo).toBe('baz');
+    expect(store.bar).toBe('qux');
+    expect(store.$raw()).toEqual({ foo: 'baz', bar: 'qux' });
+});

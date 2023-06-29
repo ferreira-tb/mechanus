@@ -59,7 +59,8 @@ export type StoreRefs<R = any> = {
     [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
 };
 
-export type DefineStoreReturn<T extends StoreRefs> = (patchFn?: (() => StorePartialState<T>) | null) => MechanusStore<T>;
+export type UseStorePatchFn<T extends StoreRefs> = (() => Promise<StorePartialState<T>> | StorePartialState<T>) | null;
+export type DefineStoreReturn<T extends StoreRefs> = (patchFn?: UseStorePatchFn<T>) => MechanusStore<T>;
 
 export class Mechanus {
     readonly #stores = new Map<string, MechanusStore>();
@@ -142,7 +143,7 @@ export class Mechanus {
      * @param patchFn A function that returns a partial state to patch the store with.
      * This will always be called asynchronously.
      */
-    public use<T extends StoreRefs>(name: string, patchFn: (() => StorePartialState<T>) | null = null): MechanusStore<T> {
+    public use<T extends StoreRefs>(name: string, patchFn: UseStorePatchFn<T> = null): MechanusStore<T> {
         const store = this.#stores.get(name) as MechanusStore<T>;
         if (!store) throw new MechanusStoreError(`Store "${name}" is not defined.`);
 
