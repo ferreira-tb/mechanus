@@ -59,7 +59,8 @@ export type StoreRefs<R = any> = {
     [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
 };
 
-export type UseStorePatchFn<T extends StoreRefs> = (() => Promise<StorePartialState<T>> | StorePartialState<T> | null) | null;
+export type MaybePromise<T> = T | Promise<T>;
+export type UseStorePatchFn<T extends StoreRefs> = (() => MaybePromise<StorePartialState<T> | null>) | null;
 export type DefineStoreReturn<T extends StoreRefs> = (patchFn?: UseStorePatchFn<T>) => MechanusStore<T>;
 
 export class Mechanus {

@@ -24,6 +24,7 @@ export {
 
 export type {
     DefineStoreReturn,
+    MaybePromise,
     MechanusStore,
     MechanusStoreRawOptions,
     StoreAction,
