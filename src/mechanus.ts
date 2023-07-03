@@ -59,7 +59,7 @@ export type StoreRefs<R = any> = {
     [K: string]: MechanusRefOrComputedRef<R> | StoreAction;
 };
 
-export type UseStorePatchFn<T extends StoreRefs> = (() => Promise<StorePartialState<T>> | StorePartialState<T>) | null;
+export type UseStorePatchFn<T extends StoreRefs> = (() => Promise<StorePartialState<T>> | StorePartialState<T> | null) | null;
 export type DefineStoreReturn<T extends StoreRefs> = (patchFn?: UseStorePatchFn<T>) => MechanusStore<T>;
 
 export class Mechanus {
@@ -149,7 +149,9 @@ export class Mechanus {
 
         if (typeof patchFn === 'function') {
             Promise.resolve().then(patchFn).then((partialState) => {
-                store.$patch(partialState);
+                if (partialState && typeof partialState === 'object') {
+                    store.$patch(partialState);
+                }
             });
         }
         
