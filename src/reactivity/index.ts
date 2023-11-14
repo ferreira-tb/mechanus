@@ -1,2 +1,2 @@
-export * from '@/reactivity/effect';
-export * from '@/reactivity/ref';
+export * from './effect';
+export * from './ref';

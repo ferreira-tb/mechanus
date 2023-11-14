@@ -1,18 +1,16 @@
 {
-	"include": ["src/**/*"],
+	"include": ["rollup.config.*"],
+
 	"compilerOptions": {
-		"baseUrl": ".",
 		"target": "esnext",
 		"lib": ["esnext", "dom"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"removeComments": false,
+		"removeComments": true,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
-		"declaration": true,
-		"declarationDir": "dist",
 
 		"alwaysStrict": true,
 		"noImplicitAny": true,
