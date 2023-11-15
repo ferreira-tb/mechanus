@@ -34,7 +34,10 @@
   },
   "scripts": {
     "build": "run-s rollup script:minify",
-    "deploy": "npm run docs:typedoc",
+    "deploy": "run-s docs:build docs:typedoc",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "docs:typedoc": "npx typedoc --plugin typedoc-plugin-mdn-links",
     "prepare": "husky install",
     "prettier": "npx prettier . --write",
@@ -51,6 +54,7 @@
     "@octokit/core": "^5.0.1",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.9.0",
+    "@unocss/preset-uno": "^0.57.4",
     "@vitest/coverage-istanbul": "^0.34.6",
     "@vitest/ui": "^0.34.6",
     "husky": "^8.0.3",
@@ -64,6 +68,9 @@
     "typedoc": "^0.25.3",
     "typedoc-plugin-mdn-links": "^3.1.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "unocss": "^0.57.4",
+    "vitepress": "^1.0.0-rc.25",
+    "vitest": "^0.34.6",
+    "vue": "^3.3.8"
   }
 }
