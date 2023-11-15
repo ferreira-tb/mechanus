@@ -1,13 +1,13 @@
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	test: {
-		globals: false,
-		environment: 'node',
-		watch: false,
-		coverage: {
-			provider: 'istanbul',
-			reporter: ['html']
-		}
-	}
+  test: {
+    globals: false,
+    environment: 'node',
+    watch: false,
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['html']
+    }
+  }
 });

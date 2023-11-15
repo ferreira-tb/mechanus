@@ -26,7 +26,7 @@ console.log(double.value); // 4
 
 // We can subscribe to changes in `counter` (or even `double`).
 watch(counter, (newValue) => {
-	console.log(`The counter is now ${newValue}`);
+  console.log(`The counter is now ${newValue}`);
 });
 
 // Updating `counter` will trigger the watcher.
@@ -45,10 +45,10 @@ import { Mechanus, computed, ref, storeToRefs } from 'mechanus';
 const mechanus = new Mechanus();
 
 const usePlayerStore = mechanus.define('player-store', () => {
-	const players = ref(['John', 'Mary', 'Peter']);
-	const amount = computed([players], () => players.value.length);
+  const players = ref(['John', 'Mary', 'Peter']);
+  const amount = computed([players], () => players.value.length);
 
-	return { players, amount };
+  return { players, amount };
 });
 
 // We can get the reactive objects from the store with `storeToRefs`.
@@ -65,12 +65,12 @@ Optionally, a third argument can be passed to `watch`: a object with the followi
 
 ```typescript
 interface WatchOptions {
-	// Force the watcher to be called immediately after creation.
-	immediate?: boolean;
-	// Watcher will be called only once, and then it will be stopped.
-	once?: boolean;
-	// Synchronously trigger the watcher after the reactive object is updated.
-	sync?: boolean;
+  // Force the watcher to be called immediately after creation.
+  immediate?: boolean;
+  // Watcher will be called only once, and then it will be stopped.
+  once?: boolean;
+  // Synchronously trigger the watcher after the reactive object is updated.
+  sync?: boolean;
 }
 ```
 
@@ -78,7 +78,7 @@ The `watch` function returns a function that can be called to stop the watcher.
 
 ```typescript
 const stop = watch(counter, (newValue) => {
-	console.log(`The counter is now ${newValue}`);
+  console.log(`The counter is now ${newValue}`);
 });
 
 // Stop the watcher.
@@ -94,12 +94,12 @@ import { watchImmediate, watchOnce } from 'mechanus';
 
 // Same as calling `watch` with `{ immediate: true }`.
 watchImmediate(counter, (newValue) => {
-	console.log(`The counter is now ${newValue}`);
+  console.log(`The counter is now ${newValue}`);
 });
 
 // Same as calling `watch` with `{ once: true }`.
 watchOnce(counter, (newValue) => {
-	console.log(`The counter is now ${newValue}`);
+  console.log(`The counter is now ${newValue}`);
 });
 ```
 
@@ -111,40 +111,40 @@ The `until` function returns a promise that resolves when the value of a reactiv
 import { until } from 'mechanus';
 
 interface UntilOptions {
-	// The timeout in milliseconds.
-	timeout?: number;
-	// If `true`, the promise will reject if the condition is not satisfied before the timeout.
-	throwOnTimeout?: boolean;
-	// Reason for the rejection.
-	timeoutReason?: string;
+  // The timeout in milliseconds.
+  timeout?: number;
+  // If `true`, the promise will reject if the condition is not satisfied before the timeout.
+  throwOnTimeout?: boolean;
+  // Reason for the rejection.
+  timeoutReason?: string;
 }
 
 const counter = ref(0);
 queueMicrotask(() => {
-	counter.value = 1;
+  counter.value = 1;
 });
 
 // Wait until `counter` is equal to 1.
 until(counter)
-	.toBe(1)
-	.then(() => {
-		console.log('Counter is now 1');
-	});
+  .toBe(1)
+  .then(() => {
+    console.log('Counter is now 1');
+  });
 
 // We can also set a timeout.
 until(counter)
-	.toBe(1, { timeout: 1000 })
-	.then(
-		() => console.log('Counter is now 1'),
-		() => console.log('Counter is not 1 after 1 second')
-	);
+  .toBe(1, { timeout: 1000 })
+  .then(
+    () => console.log('Counter is now 1'),
+    () => console.log('Counter is not 1 after 1 second')
+  );
 
 // By default, the promise will reject if the condition is not satisfied before the timeout.
 // We can change this behavior by passing `{ throwOnTimeout: false }`.
 until(counter)
-	.toBe(1, { timeout: 1000, throwOnTimeout: false })
-	.then(
-		() => console.log('Counter is now 1'),
-		() => console.log('What am I doing here?')
-	);
+  .toBe(1, { timeout: 1000, throwOnTimeout: false })
+  .then(
+    () => console.log('Counter is now 1'),
+    () => console.log('What am I doing here?')
+  );
 ```

@@ -1,9 +1,9 @@
 {
-	"recommendations": [
-		"github.vscode-pull-request-github",
-		"github.vscode-github-actions",
-		"vivaxy.vscode-conventional-commits",
-		"esbenp.prettier-vscode",
-		"vscode-icons-team.vscode-icons"
-	]
+  "recommendations": [
+    "github.vscode-pull-request-github",
+    "github.vscode-github-actions",
+    "vivaxy.vscode-conventional-commits",
+    "esbenp.prettier-vscode",
+    "vscode-icons-team.vscode-icons"
+  ]
 }
