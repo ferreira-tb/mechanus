@@ -24,7 +24,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: 'https://github.com/ferreira-tb/mechanus/edit/main/docs/:path'
+      pattern: 'https://github.com/ferreira-tb/mechanus/edit/master/docs/:path'
     },
 
     search: {
