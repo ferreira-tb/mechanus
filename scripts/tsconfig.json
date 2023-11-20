@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["./**/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "target": "esnext",
@@ -8,11 +8,10 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "removeComments": false,
+    "removeComments": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "declaration": true,
-    "declarationDir": "dist",
+    "declaration": false,
 
     "alwaysStrict": true,
     "noImplicitAny": true,
@@ -30,8 +29,6 @@
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmitOnError": true,
-
-    "types": ["node"]
+    "noEmitOnError": true
   }
 }
