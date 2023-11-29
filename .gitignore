@@ -16,6 +16,7 @@ test/dist
 coverage
 website
 *.local
+.eslintcache
 **/.vitepress/temp
 **/.vitepress/cache
 
